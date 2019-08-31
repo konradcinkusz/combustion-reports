@@ -54,6 +54,7 @@ export const reducer = (state, action) => {
       key: 7777
     }
   ];
+  
   switch (action.type) {
     case addReportType:
       return [

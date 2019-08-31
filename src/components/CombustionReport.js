@@ -281,7 +281,7 @@ class CombustionReport extends Component {
 
         return (
             <div className="listMain">
-                <h2>Wybierz samochód</h2>
+                <h2>Wybierz samochód z listy</h2>
                 <div className="row">
                     <div className="col-md-4">
                         <Dropdown
