@@ -17,6 +17,7 @@
     "reactstrap": "^6.3.0",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
+    "regression": "2.0.1",
     "rimraf": "^2.6.2"
   },
   "devDependencies": {
