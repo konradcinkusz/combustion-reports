@@ -6,7 +6,7 @@ import { FormErrors } from './FormErrors';
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import Items from './Items'
-import regression from 'regression'
+import Polynomial from "./Polynomial";
 
 class CombustionReport extends Component {
     constructor(props) {
@@ -32,7 +32,10 @@ class CombustionReport extends Component {
     }
 
     addItem(e) {
-        if (typeof this._dropDownElement === 'undefined') {
+        if (typeof this._dropDownElement === 'undefined' || this._dropDownElement.state.selected.value === "") {
+            //TODO: To wystąpi w momencie, kiedy nie ustawimy value na dropdownie
+            //Tu trzeba wyrzucić jakiś exception
+            e.preventDefault();
             return;
         }
 
@@ -56,21 +59,6 @@ class CombustionReport extends Component {
 
         this.props.addReport(itemToAdd);
 
-        //x - spalanie, prędkość na y
-        var combustionReports = this.props.combustionReports;
-        var combustionVelocityData = []
-        combustionReports.forEach(function (item) {
-            combustionVelocityData.push([item.averageCombusiton, item.averageSpeed]);
-        });
-        combustionVelocityData.push([itemToAdd.averageCombusiton, itemToAdd.averageSpeed]);
-
-        var data = combustionVelocityData;
-        var result = regression.polynomial(data, { order: 3 });
-
-        var carKey = selectedCar[0].key;
-
-        //this.props.updateCarCoefficient(carKey, result);
-        
         this._inputElementRouteKilometers.value = "";
         this._inputElementAverageCombustion.value = "";
         this._inputElementAverageSpeed.value = "";
@@ -90,7 +78,9 @@ class CombustionReport extends Component {
             'averageSpeed': value,
             selectedCombustions: [...innerSelectedCombustions, {
                 friendlyName: x,
-                key: itemToAdd.key
+                key: itemToAdd.key,
+                averageCombusiton: itemToAdd.averageCombusiton,
+                averageSpeed: itemToAdd.averageSpeed
             }]
         }, () => { this.validateField('clean', value) });
 
@@ -126,9 +116,12 @@ class CombustionReport extends Component {
                 x = x.replace(/\{2\}/g, item.averageSpeed);
                 return {
                     friendlyName: x,
-                    key: item.key
+                    key: item.key,
+                    averageCombusiton: item.averageCombusiton,
+                    averageSpeed: item.averageSpeed
                 }
             });
+
         this.setState({
             selectedCombustions: combustions,
             selectedCarKey: e.value
@@ -257,11 +250,14 @@ class CombustionReport extends Component {
                 x = x.replace(/\{2\}/g, item.averageSpeed);
                 return {
                     friendlyName: x,
-                    key: item.key
+                    key: item.key,
+                    averageCombusiton: item.averageCombusiton,
+                    averageSpeed: item.averageSpeed
                 }
             });
         this.setState({
-            selectedCombustions: combustions
+            selectedCombustions: combustions,
+            selectedCarKey: selectedCarKey
         })
     }
 
@@ -297,7 +293,7 @@ class CombustionReport extends Component {
 
                     </div>
                     <div className="col-md-4">
-                        Współczynnik:
+
                     </div>
                 </div>
                 <h2>Wprowadź raport spalania</h2>
@@ -344,6 +340,14 @@ class CombustionReport extends Component {
                     <Items
                         entries={this.state.selectedCombustions}
                         delete={this.deleteItem} />
+                </div>
+                <div>
+                    <Polynomial
+                        entries={this.state.selectedCombustions.map(function (item) {
+                            return { x: item.averageSpeed, y: item.averageCombusiton }
+                        })}
+                        order={5}
+                    />
                 </div>
             </div>
         );

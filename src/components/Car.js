@@ -6,6 +6,8 @@ import { FormErrors } from './FormErrors';
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import Items from './Items'
+import regression from 'regression'
+import { debug } from "util";
 
 class Car extends Component {
     constructor(props) {
@@ -159,6 +161,41 @@ class Car extends Component {
     }
     // #endregion
 
+    componentWillMount() {
+        var combustionReports = this.props.combustionReports;
+        var cars = this.props.cars;
+
+        cars.forEach(function (carItem) {
+            //x - spalanie, prędkość na y
+            var combustionVelocityData = []
+            combustionVelocityData.push([0, 0])
+            combustionReports.forEach(function (item) {
+                if (carItem.key === item.carKey) {
+                    combustionVelocityData.push([item.averageSpeed, item.averageCombusiton]);
+                }
+            });
+
+            var data = combustionVelocityData;
+            var resultCombustionVelocityData = regression.polynomial(data, { order: 2 }); //degree of polynomial
+
+            var combustionRouteData = []
+            combustionRouteData.push([0, 0])
+            combustionReports.forEach(function (item) {
+                if (carItem.key === item.carKey) {
+                    combustionRouteData.push([item.routeKilometers, item.averageCombusiton]);
+                }
+            });
+
+            var dataRoute = combustionRouteData;
+            var resultCombustionRouteData = regression.polynomial(dataRoute, { order: 2 }); //degree of polynomial
+
+            carItem.combustionVelocityPoly = resultCombustionVelocityData
+            carItem.combustionRoutePoly = resultCombustionRouteData
+        });
+        for (var i = 0; i < cars.length; i++) {
+            this.props.updateCarPoly(cars[i])
+        }
+    }
     render() {
         var fuelItems = this.props.fuelItems.map(function (value) {
             return {
@@ -239,7 +276,8 @@ class Car extends Component {
 export default connect(
     state => ({
         fuelItems: state.fuelItems,
-        cars: state.cars
+        cars: state.cars,
+        combustionReports: state.combustionReports
     }),
     dispatch => bindActionCreators(actionCreators, dispatch)
 )(Car);

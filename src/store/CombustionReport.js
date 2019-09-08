@@ -54,7 +54,7 @@ export const reducer = (state, action) => {
       key: 7777
     }
   ];
-  
+
   switch (action.type) {
     case addReportType:
       return [
@@ -68,7 +68,7 @@ export const reducer = (state, action) => {
         }
       ];
     case removeReportType:
-      return state.filter(function(item) {
+      return state.filter(function (item) {
         return item.key !== action.report.key;
       });
     default:
