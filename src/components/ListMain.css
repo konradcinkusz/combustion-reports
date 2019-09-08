@@ -48,6 +48,34 @@
             background-color: #808080;
             border: 2px solid #808080;
         }
+    
+    .listMain .Collapsible__trigger {
+        margin-left: 10px;
+        background-color: transparent;
+        border: none;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 3px;
+        transition: all .15s ease-in;
+        cursor: pointer;
+    }
+    .listMain .Collapsible__trigger:hover:nth-child(1) {
+        background-color: #F45B69;
+    }
+
+    .listMain .Collapsible__trigger:hover:nth-child(3) {
+        background-color: #C0DFA1;
+    }
+    .listMain .Collapsible__contentInner {
+        border-radius: 5px; 
+        padding: 10px;
+        font-size: 16px;
+        margin: 10px;
+        margin-right: 10px;
+        background-color: #0066FF;
+        color: #FFF;
+        border: 2px solid black;
+    }
 
     .listMain .theList {
         list-style: none;

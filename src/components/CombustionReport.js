@@ -347,6 +347,7 @@ class CombustionReport extends Component {
                             return { x: item.averageSpeed, y: item.averageCombusiton }
                         })}
                         order={5}
+                        plotTitle="<b>Średnia prędkość do spalania</b>"
                     />
                 </div>
             </div>

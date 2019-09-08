@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import regression from "regression";
 import Plot from "react-plotly.js";
 import * as tf from "@tensorflow/tfjs";
+import Collapsible from "react-collapsible"
 
 class Polynomial extends Component {
     constructor(props) {
@@ -32,9 +33,17 @@ class Polynomial extends Component {
         return { x: x, y: y };
     }
 
-    plot(data) {
+    plot(data, plotName = '') {
         const layout = {
-            margin: { l: 20, r: 20, b: 20, t: 20, pad: 0 },
+            title: {
+                text: plotName,
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 24
+                },
+                xref: 'paper'
+            },
+            margin: { l: 20, r: 20, b: 20, t: 40, pad: 0 },
             legend: { xanchor: "left", yanchor: "top", y: 1, x: 0, orientation: "v" },
             height: 150,
             xaxis: {
@@ -55,7 +64,9 @@ class Polynomial extends Component {
                 ticks: "",
                 showticklabels: true
             },
-            autosize: true
+            autosize: true,
+            plot_bgcolor: '#C0DFA1',
+            paper_bgcolor: '#eee'
         };
         const style = { width: "100%", height: "100%" };
         return (
@@ -67,7 +78,7 @@ class Polynomial extends Component {
                             y: data.y,
                             mode: "lines-marker",
                             name: "Poly",
-                            marker: { size: 12, color: "red" }
+                            marker: { size: 12, color: "black" }
                         }
                         : {}
                 ]}
@@ -98,27 +109,30 @@ class Polynomial extends Component {
         }
         return (
             <div>
-                <p>{result.string}</p>
+                <Collapsible trigger="Regression results (click to show):">
+                    <p>{result.string}</p>
+                    <div>
+                        <strong>x:</strong>
+                        {data.x.map(function (item, idx) {
+                            if (idx % 10 === 0) {
+                                return item.toFixed(accuracy) + ", ";
+                            }
+                            return;
+                        })}
+                    </div>
+                    <div>
+                        <strong>y:</strong>
+                        {data.y.map(function (item, idx) {
+                            if (idx % 10 === 0) {
+                                return item.toFixed(accuracy) + ", ";
+                            }
+                            return;
+                        })}
+                    </div>
+                </Collapsible>
                 <div>
-                    <strong>x:</strong>
-                    {data.x.map(function (item, idx) {
-                        if (idx % 10 === 0) {
-                            return item.toFixed(accuracy) + ", ";
-                        }
-                        return;
-                    })}
+                    {this.plot({ x: data.x, y: data.y }, this.props.plotTitle)}
                 </div>
-                <div>
-                    <strong>y:</strong>
-                    {data.y.map(function (item, idx) {
-                        if (idx % 10 === 0) {
-                            return item.toFixed(accuracy) + ", ";
-                        }
-                        return;
-                    })}
-                </div>
-                {this.plot({ x: data.x, y: data.y })}
-                <div />
             </div>
         );
     }
