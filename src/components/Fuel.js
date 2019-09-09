@@ -48,22 +48,20 @@ class Fuel extends Component {
     }
 
     // #region Funkcje walidacyjne
-    blurUserInput(e) {
-        if (e.target.value.length > 0) {
-            return;
-        }
+    setEventState(e, value = '') {
         const name = e.target.name;
-        const value = '';
         this.setState({ [name]: value },
             () => { this.validateField(name, value) });
     }
 
-    handleUserInput(e) {
-        const name = e.target.name;
-        const value = e.target.value;
-        this.setState({ [name]: value },
-            () => { this.validateField(name, value) });
+    blurUserInput(e) {
+        if (e.target.value.length > 0) {
+            return;
+        }
+        this.setEventState(e);
     }
+
+    handleUserInput(e) { this.setEventState(e, e.target.value); }
 
     validateField(fieldName, value) {
         let fieldValidationErrors = this.state.formErrors;
@@ -127,7 +125,7 @@ class Fuel extends Component {
     // #endregion
 
     render() {
-        var fuelItems = this.props.fuelItems.map(function (value) {
+        var fuelItems = this.props.fuelItems.fuels.map(function (value) {
             return {
                 value: value.key,
                 label: value.fuelType
@@ -174,7 +172,7 @@ class Fuel extends Component {
                 </div>
                 <div className="internalItems">
                     <Items
-                        entries={this.props.fuelItems.map(function (item) {
+                        entries={this.props.fuelItems.fuels.map(function (item) {
                             var x = "{0} - Cena: {1}";
                             x = x.replace(/\{0\}/g, item.fuelType);
                             x = x.replace(/\{1\}/g, item.fuelPrice);

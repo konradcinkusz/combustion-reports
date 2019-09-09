@@ -7,7 +7,6 @@ import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import Items from './Items'
 import regression from 'regression'
-import { debug } from "util";
 
 class Car extends Component {
     constructor(props) {
@@ -197,7 +196,7 @@ class Car extends Component {
         }
     }
     render() {
-        var fuelItems = this.props.fuelItems.map(function (value) {
+        var fuelItems = this.props.fuelItems.fuels.map(function (value) {
             return {
                 value: value.key,
                 label: value.fuelType + " - cena: " + value.fuelPrice

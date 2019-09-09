@@ -4,6 +4,16 @@ const updateFuelType = 'FUEL_UPDATE';
 const requestFuelType = 'REQUEST_FUEL';
 const receiveFuelType = 'RECEIVE_FUEL';
 
+const inititalState = {
+    fuels: [{
+        fuelType: "Pb95",
+        fuelPrice: 4.5,
+        key: 1111
+    }],
+    fuelItemsServer: '',
+    isLoading: false
+}
+
 export const actionCreators = {
     addFuel: (fuel) => ({
         type: addFuelType,
@@ -36,50 +46,56 @@ export const actionCreators = {
 };
 
 export const reducer = (state, action) => {
-    state = state || [{
-        fuelType: "Pb95",
-        fuelPrice: 4.5,
-        key: 1111
-    }]
+    state = state || inititalState
+
     switch (action.type) {
         case addFuelType:
-            return [
-                ...state, {
-                    fuelType: action.fuelType,
-                    fuelPrice: action.fuelPrice,
-                    key: action.key
-                }
-            ]
+            return {
+                ...state,
+                fuels: [
+                    ...state.fuels, {
+                        fuelType: action.fuelType,
+                        fuelPrice: action.fuelPrice,
+                        key: action.key
+                    }
+                ]
+            };
         case removeFuelType:
-            return state.filter(function (item) {
-                return (item.key !== action.fuel.key);
-            })
+            return {
+                ...state,
+                fuels: state.fuels.filter(function (item) {
+                    return (item.key !== action.fuel.key);
+                })
+            };
         case updateFuelType:
-            return state.map((item) => {
-                if (item.key !== action.key) {
-                    // This isn't the item we care about - keep it as-is
-                    return item
-                }
+            return {
+                ...state,
+                fuels: state.fuels.map((item) => {
+                    if (item.key !== action.key) {
+                        // This isn't the item we care about - keep it as-is
+                        return item
+                    }
 
-                // Otherwise, this is the one we want - return an updated value
-                return {
-                    ...action.fuel
-                    //...item,
-                    //...{ ...item, combustion: action.updateInformation.combustion }
-                }
-            })
+                    // Otherwise, this is the one we want - return an updated value
+                    return {
+                        ...action.fuel  //TODO: Konrad - to chyba jest źle rozpakowywane
+                        //...item,
+                        //...{ ...item, combustion: action.updateInformation.combustion }
+                    }
+                })
+            };
         case requestFuelType:
             return {
                 ...state,
                 fuelItemsServer: action.fuelItemsServer,
                 isLoading: true
-            }
+            };
         case receiveFuelType:
             return {
                 ...state,
                 fuelItemsServer: action.fuelItemsServer,
                 isLoading: false
-            }
+            };
         default:
             return state
     }

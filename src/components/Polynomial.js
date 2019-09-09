@@ -1,14 +1,21 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import regression from "regression";
 import Plot from "react-plotly.js";
 import * as tf from "@tensorflow/tfjs";
 import Collapsible from "react-collapsible"
 
-class Polynomial extends Component {
+class Polynomial extends PureComponent {
     constructor(props) {
         super(props);
 
-        this.genData = this.genData.bind(this);
+        this.state = {
+            accuracy: 2,
+            result: '',
+            dataXMapped: '',
+            dataYMapped: '',
+            preparedPlot: ''
+        };
+
         this.plot = this.plot.bind(this);
     }
 
@@ -89,15 +96,17 @@ class Polynomial extends Component {
         );
     }
 
-    render() {
-        const accuracy = 2;
+    componentWillMount() {
         var max = 0;
+        const accuracy = this.state.accuracy;
+
         var polyCoords = this.props.entries.map(function (item) {
             if (item.x > max) {
                 max = item.x
             }
             return [item.x, item.y];
         });
+
         var result = { string: "undefined" };
         var data = { x: [0], y: [0] };
         if (polyCoords.length !== 0) {
@@ -107,31 +116,50 @@ class Polynomial extends Component {
 
             data = this.genData(400, result.predict, max * 3);
         }
+
+        var dataX = data.x.map(function (item, idx) {
+            if (idx % 10 === 0) {
+                return item.toFixed(accuracy) + ", ";
+            }
+            return;
+        })
+
+        var dataY = data.y.map(function (item, idx) {
+            if (idx % 10 === 0) {
+                return item.toFixed(accuracy) + ", ";
+            }
+            return;
+        })
+
+        var preparedPlot = this.plot({ x: data.x, y: data.y }, this.props.plotTitle)
+
+        this.setState({
+            ...this.state,
+            max: max,
+            data: data,
+            result: result,
+            dataXMapped: dataX,
+            dataYMapped: dataY,
+            preparedPlot: preparedPlot
+        })
+    }
+
+    render() {
         return (
             <div>
                 <Collapsible trigger="Regression results (click to show):">
-                    <p>{result.string}</p>
+                    <p>{this.state.result.string}</p>
                     <div>
                         <strong>x:</strong>
-                        {data.x.map(function (item, idx) {
-                            if (idx % 10 === 0) {
-                                return item.toFixed(accuracy) + ", ";
-                            }
-                            return;
-                        })}
+                        {this.state.dataXMapped}
                     </div>
                     <div>
                         <strong>y:</strong>
-                        {data.y.map(function (item, idx) {
-                            if (idx % 10 === 0) {
-                                return item.toFixed(accuracy) + ", ";
-                            }
-                            return;
-                        })}
+                        {this.state.dataYMapped}
                     </div>
                 </Collapsible>
                 <div>
-                    {this.plot({ x: data.x, y: data.y }, this.props.plotTitle)}
+                    {this.state.preparedPlot}
                 </div>
             </div>
         );
