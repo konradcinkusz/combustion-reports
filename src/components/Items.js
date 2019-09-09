@@ -1,19 +1,12 @@
 ﻿import React, { Component } from "react";
 import FlipMove from "react-flip-move";
+import { isEqual } from "lodash";
 
 class Items extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            listItems: ''
-        }
-
         this.createTask = this.createTask.bind(this);
-    }
-
-    shouldComponentUpdate(nextProps, nextState) {
-        return nextProps !== this.props;
     }
 
     createTask(item) {
@@ -28,19 +21,17 @@ class Items extends Component {
         );
     }
 
-    componentWillMount() {
-        var todoEntries = this.props.entries;
-        var listItems = todoEntries.map(this.createTask);
-        this.setState({
-            listItems: listItems
-        });
+    shouldComponentUpdate(nextProps) {
+        return !isEqual(this.props, nextProps);
     }
 
     render() {
+        var todoEntries = this.props.entries;
+        var listItems = todoEntries.map(this.createTask);
         return (
             <ul className="theList">
                 <FlipMove duration={250} easing="ease-out">
-                    {this.state.listItems}
+                    {listItems}
                 </FlipMove>
             </ul>
         );

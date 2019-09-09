@@ -128,9 +128,10 @@ class Fuel extends Component {
         var fuelItems = this.props.fuelItems.fuels.map(function (value) {
             return {
                 value: value.key,
-                label: value.fuelType
+                label: value.fuelType + " " + value.fuelPrice
             };
         });
+
         return (
             <div className="listMain">
                 <h2>Wprowadź swoje paliwo lub wybierz proponowane z listy.</h2>
@@ -172,13 +173,10 @@ class Fuel extends Component {
                 </div>
                 <div className="internalItems">
                     <Items
-                        entries={this.props.fuelItems.fuels.map(function (item) {
-                            var x = "{0} - Cena: {1}";
-                            x = x.replace(/\{0\}/g, item.fuelType);
-                            x = x.replace(/\{1\}/g, item.fuelPrice);
+                        entries={fuelItems.map(function (item) {
                             return {
-                                friendlyName: x,
-                                key: item.key
+                                friendlyName: item.label,
+                                key: item.value
                             }
                         })}
                         delete={this.props.removeFuel} />

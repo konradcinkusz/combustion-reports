@@ -1,10 +1,11 @@
-import React, { PureComponent } from "react";
+import React, { Component } from "react";
 import regression from "regression";
 import Plot from "react-plotly.js";
 import * as tf from "@tensorflow/tfjs";
-import Collapsible from "react-collapsible"
+import Collapsible from "react-collapsible";
+import { isEqual } from "lodash";
 
-class Polynomial extends PureComponent {
+class Polynomial extends Component {
     constructor(props) {
         super(props);
 
@@ -17,6 +18,14 @@ class Polynomial extends PureComponent {
         };
 
         this.plot = this.plot.bind(this);
+    }
+
+    shouldComponentUpdate(nextProps) {
+        if (!isEqual(this.props, nextProps)) {
+            this.componentWillMount();
+            return true;
+        }
+        return false;
     }
 
     genData(numPoints, predict, max) {
