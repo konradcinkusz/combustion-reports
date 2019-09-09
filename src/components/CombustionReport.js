@@ -118,7 +118,8 @@ class CombustionReport extends Component {
                     friendlyName: x,
                     key: item.key,
                     averageCombusiton: item.averageCombusiton,
-                    averageSpeed: item.averageSpeed
+                    averageSpeed: item.averageSpeed,
+                    routeKilometers: item.routeKilometers
                 }
             });
 
@@ -252,7 +253,8 @@ class CombustionReport extends Component {
                     friendlyName: x,
                     key: item.key,
                     averageCombusiton: item.averageCombusiton,
-                    averageSpeed: item.averageSpeed
+                    averageSpeed: item.averageSpeed,
+                    routeKilometers: item.routeKilometers
                 }
             });
         this.setState({
@@ -335,20 +337,31 @@ class CombustionReport extends Component {
                         <button type="submit" disabled={!this.state.formValid}>Dodaj</button>
                     </form>
                 </div>
-                <h2>Raporty spalania:</h2>
-                <div className="internalItems">
-                    <Items
-                        entries={this.state.selectedCombustions}
-                        delete={this.deleteItem} />
-                </div>
-                <div>
-                    <Polynomial
-                        entries={this.state.selectedCombustions.map(function (item) {
-                            return { x: item.averageSpeed, y: item.averageCombusiton }
-                        })}
-                        order={5}
-                        plotTitle="<b>Średnia prędkość do spalania</b>"
-                    />
+                <div className="row">
+                    <div className="col-md-4">
+                        <h2>Raporty spalania:</h2>
+                        <div className="internalItems">
+                            <Items
+                                entries={this.state.selectedCombustions}
+                                delete={this.deleteItem} />
+                        </div>
+                    </div>
+                    <div className="col-md-8">
+                        <Polynomial
+                            entries={this.state.selectedCombustions.map(function (item) {
+                                return { x: item.averageSpeed, y: item.averageCombusiton }
+                            })}
+                            order={5}
+                            plotTitle="<b>Średnia prędkość do spalania</b>"
+                        />
+                        <Polynomial
+                            entries={this.state.selectedCombustions.map(function (item) {
+                                return { x: item.routeKilometers, y: item.averageCombusiton }
+                            })}
+                            order={5}
+                            plotTitle="<b>Średnia dł. trasy do spalania</b>"
+                        />
+                    </div>
                 </div>
             </div>
         );
