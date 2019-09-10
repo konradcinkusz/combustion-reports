@@ -7,6 +7,7 @@ import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import Items from './Items'
 import Polynomial from "./Polynomial";
+import regression from "regression";
 
 class CombustionReport extends Component {
     constructor(props) {
@@ -263,6 +264,20 @@ class CombustionReport extends Component {
         })
     }
 
+    createRegression(selectedCombustion) {
+        var polyCoords = selectedCombustion.map(function (item) {
+            return [item.x, item.y];
+        });
+
+        var result = { string: "undefined" };
+        if (polyCoords.length !== 0) {
+            result = regression.power(polyCoords, {
+                order: this.props.order
+            });
+        }
+        return result;
+    }
+
     render() {
         var carItems = this.props.cars.map(function (value) {
             return {
@@ -277,6 +292,20 @@ class CombustionReport extends Component {
             defaultCarOption = carItems[carIdx]
         }
 
+        //#region create regression predkosc do spalania
+        var selCom = this.state.selectedCombustions.map(function (item) {
+            return { x: item.averageSpeed, y: item.averageCombusiton }
+        })
+        var resultFirst = this.createRegression(selCom);
+        //#endregion
+
+        //#region create regression droga do spalania
+        var selComRoute = this.state.selectedCombustions.map(function (item) {
+            return { x: item.routeKilometers, y: item.averageCombusiton }
+        })
+        var resultSecond = this.createRegression(selComRoute);
+        //#endregion
+        debugger
         return (
             <div className="listMain">
                 <h2>Wybierz samochód z listy</h2>
@@ -348,20 +377,14 @@ class CombustionReport extends Component {
                     </div>
                     <div className="col-md-8">
                         <Polynomial
-                            entries={this.state.selectedCombustions.map(function (item) {
-                                return { x: item.averageSpeed, y: item.averageCombusiton }
-                            })}
                             order={5}
                             plotTitle="<b>Średnia prędkość do spalania</b>"
-                            id={123}
+                            regression={resultFirst}
                         />
                         <Polynomial
-                            entries={this.state.selectedCombustions.map(function (item) {
-                                return { x: item.routeKilometers, y: item.averageCombusiton }
-                            })}
                             order={5}
                             plotTitle="<b>Średnia dł. trasy do spalania</b>"
-                            id={456}
+                            regression={resultSecond}
                         />
                     </div>
                 </div>

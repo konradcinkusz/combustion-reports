@@ -1,9 +1,8 @@
 import React, { Component } from "react";
-import regression from "regression";
 import Plot from "react-plotly.js";
 import * as tf from "@tensorflow/tfjs";
 import Collapsible from "react-collapsible";
-import { isEqual } from "lodash";
+import { isEqual, maxBy } from "lodash";
 
 class Polynomial extends Component {
     constructor(props) {
@@ -11,7 +10,7 @@ class Polynomial extends Component {
 
         this.state = {
             accuracy: 2,
-            result: '',
+            regression: '',
             dataXMapped: '',
             dataYMapped: '',
             preparedPlot: ''
@@ -21,7 +20,8 @@ class Polynomial extends Component {
     }
 
     shouldComponentUpdate(nextProps) {
-        if (!isEqual(this.props, nextProps)) {
+        debugger
+        if (!isEqual(this.props.regression.points, nextProps.regression.points)) {
             this.componentWillMount();
             return true;
         }
@@ -42,6 +42,7 @@ class Polynomial extends Component {
         x = x.sort(function (a, b) {
             return a - b;
         });
+
         for (let i = 0; i < numPoints; i++) {
             y[i] = predict(x[i])[1];
         }
@@ -106,24 +107,17 @@ class Polynomial extends Component {
     }
 
     componentWillMount() {
-        var max = 0;
         const accuracy = this.state.accuracy;
-
-        var polyCoords = this.props.entries.map(function (item) {
-            if (item.x > max) {
-                max = item.x
-            }
-            return [item.x, item.y];
-        });
-
-        var result = { string: "undefined" };
         var data = { x: [0], y: [0] };
-        if (polyCoords.length !== 0) {
-            result = regression.power(polyCoords, {
-                order: this.props.order
+        var regression = ''
+        if (this.props.regression.string !== "undefined" && !isNaN(this.props.regression.r2)) {
+            var val = maxBy(this.props.regression.points, function (point) {
+                return point[0];
             });
-
-            data = this.genData(400, result.predict, max * 3);
+            if (val !== "undefined" || val.length !== 0) {
+                data = this.genData(400, this.props.regression.predict, val[0] * 3);
+                regression = this.props.regression.string;
+            }
         }
 
         var dataX = data.x.map(function (item, idx) {
@@ -140,13 +134,12 @@ class Polynomial extends Component {
             return;
         })
 
-        var preparedPlot = this.plot({ x: data.x, y: data.y }, this.props.plotTitle)
+        var preparedPlot = isNaN(this.props.regression.r2) ? '' : this.plot({ x: data.x, y: data.y }, this.props.plotTitle)
 
         this.setState({
             ...this.state,
-            max: max,
             data: data,
-            result: result,
+            regression: regression,
             dataXMapped: dataX,
             dataYMapped: dataY,
             preparedPlot: preparedPlot
@@ -157,7 +150,7 @@ class Polynomial extends Component {
         return (
             <div>
                 <Collapsible trigger="Regression results (click to show):">
-                    <p>{this.state.result.string}</p>
+                    <p>{this.state.regression.string}</p>
                     <div>
                         <strong>x:</strong>
                         {this.state.dataXMapped}
