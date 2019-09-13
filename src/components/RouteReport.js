@@ -1,6 +1,9 @@
 import React, { Component } from "react"
 import { FormErrors } from './FormErrors';
 import TextInput from "react-autocomplete-input"
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { actionCreators } from '../store/Route';
 
 class RouteReport extends Component {
     constructor(props) {
@@ -10,11 +13,34 @@ class RouteReport extends Component {
             formErrors: { routeName: '' },
             friendlyNames: { routeName: 'Pole nazwa drogi' },
             routeNameValid: '',
-            options: ["dom", "wakacje", "praca", "inne"]
+            options: ["dom", "wakacje", "praca", "inne", "Cactus"]
         }
+
+        this.localTimeout = 'undefined';
+        this.start = 100;
+
+        //Working long press:
+        //https://codesandbox.io/s/6jm33jz08z
+        this.onMouseDown = this.onMouseDown.bind(this);
+        this.repeat = this.repeat.bind(this);
+        this.onMouseUp = this.onMouseUp.bind(this);
     }
 
-    // #region Funkcje walidacyjne
+    onMouseDown() {
+        this.repeat();
+    }
+
+    repeat() {
+        this.props.increment()
+        this.t = setTimeout(this.repeat, this.start);
+        this.start = this.start / 2;
+    }
+
+    onMouseUp() {
+        clearTimeout(this.t);
+        this.start = 100;
+    }
+    //#region Funkcje walidacyjne
     setEventState(e, value = '') {
         const name = e.target.name;
         this.setState(
@@ -30,7 +56,6 @@ class RouteReport extends Component {
     }
 
     handleAutosuggestTextInput(textValue) {
-        debugger
         this.setState(
             { 'routeName': textValue },
             () => { this.validateField('routeName', textValue) });
@@ -91,37 +116,40 @@ class RouteReport extends Component {
         if (typeof error === 'string' || typeof error === 'undefined') {
             return '';
         }
-        debugger
         return (error ? 'is-valid' : 'is-invalid');//Bootstrap v4
     }
-    // #endregion
+    //#endregion
 
     render() {
         return (
             <div>
                 <FormErrors formErrors={this.state.formErrors} friendlyNames={this.state.friendlyNames} />
-
-                {/* <input
-                    name="routeName"
-                    className={`form-control ${this.errorFuelTypeClass(this.state.routeNameValid)}`}
-                    ref={(a) => this._inputElementRouteName = a}
-                    placeholder="Nazwa drogi"
-                    onChange={(event) => this.handleUserInput(event)}
-                    onBlur={(event) => this.blurUserInput(event)}
-                /> */}
-
                 <TextInput
                     name="routeName"
                     className={`form-control ${this.errorFuelTypeClass(this.state.routeNameValid)}`}
                     ref={(a) => this._inputElementRouteName = a}
-                    placeholder="Nazwa drogi"
+                    placeholder="Moja droga @Cactusem do domu"
                     onChange={(event) => this.handleAutosuggestTextInput(event)}
                     onBlur={(event) => this.handleAutosuggestTextInput(event)}
-                    //onRequestOptions={this.handleRequestOptions} 
-                    options={this.state.options} />
+                    options={this.state.options}
+                />
+                <div className="d-flex justify-content-between">
+                    <button
+                        className="buttons"
+                        onMouseUp={this.onMouseUp}
+                        onMouseDown={this.onMouseDown}>+</button>
+                    {this.props.count}
+                    <button className="buttons"
+                        onMouseUp={this.onMouseUp}
+                        onMouseDown={this.zoomOutDown}>-</button>
+                </div>
             </div>
         );
     }
 }
 
-export default RouteReport;
+
+export default connect(
+    state => state.kmCounter,
+    dispatch => bindActionCreators(actionCreators, dispatch)
+)(RouteReport);

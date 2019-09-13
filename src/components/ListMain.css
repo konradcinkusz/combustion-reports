@@ -104,6 +104,7 @@
     font-weight: bold;
     border-radius: 3px;
     transition: all .15s ease-in;
+    padding: 4px;
 }
 
     .buttons:hover:nth-child(1) {

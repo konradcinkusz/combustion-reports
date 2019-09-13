@@ -8,6 +8,7 @@ import * as WeatherForecasts from './WeatherForecasts';
 import * as Fuel from './Fuel';
 import * as Car from './Car';
 import * as CombustionReport from './CombustionReport'
+import * as RouteReport from './Route';
 
 export default function configureStore(history, initialState) {
 
@@ -29,7 +30,8 @@ export default function configureStore(history, initialState) {
         weatherForecasts: WeatherForecasts.reducer,
         fuelItems: Fuel.reducer,
         cars: Car.reducer,
-        combustionReports: CombustionReport.reducer
+        combustionReports: CombustionReport.reducer,
+        kmCounter: RouteReport.reducer
     };
 
     const middleware = [
