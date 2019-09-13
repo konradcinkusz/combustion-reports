@@ -1,6 +1,6 @@
 import React, { Component } from "react"
-import Polynomial from './Polynomial'
 import { FormErrors } from './FormErrors';
+import TextInput from "react-autocomplete-input"
 
 class RouteReport extends Component {
     constructor(props) {
@@ -10,20 +10,8 @@ class RouteReport extends Component {
             formErrors: { routeName: '' },
             friendlyNames: { routeName: 'Pole nazwa drogi' },
             routeNameValid: '',
-            data: ''
+            options: ["dom", "wakacje", "praca", "inne"]
         }
-    }
-
-    componentWillMount() {
-        var x = [1, 4, 6, 3, 2, 6]
-        var y = [6, 6, 2, 7, 3, 8]
-        var data = []
-        for (var i = 0; i < x.length; i++) {
-            data.push({ x: x[i], y: y[i] })
-        }
-        this.setState({
-            data: data
-        })
     }
 
     // #region Funkcje walidacyjne
@@ -41,7 +29,16 @@ class RouteReport extends Component {
         this.setEventState(e);
     }
 
-    handleUserInput(e) { this.setEventState(e, e.target.value); }
+    handleAutosuggestTextInput(textValue) {
+        debugger
+        this.setState(
+            { 'routeName': textValue },
+            () => { this.validateField('routeName', textValue) });
+    }
+
+    handleUserInput(e) {
+        this.setEventState(e, e.target.value);
+    }
 
     // stringLengthValidation(value, minLength, maxLength) {
     //     var str = new String(value);
@@ -94,6 +91,7 @@ class RouteReport extends Component {
         if (typeof error === 'string' || typeof error === 'undefined') {
             return '';
         }
+        debugger
         return (error ? 'is-valid' : 'is-invalid');//Bootstrap v4
     }
     // #endregion
@@ -101,22 +99,26 @@ class RouteReport extends Component {
     render() {
         return (
             <div>
-                <div>
-                    <FormErrors formErrors={this.state.formErrors} friendlyNames={this.state.friendlyNames} />
-                </div>
-                <input
+                <FormErrors formErrors={this.state.formErrors} friendlyNames={this.state.friendlyNames} />
+
+                {/* <input
                     name="routeName"
                     className={`form-control ${this.errorFuelTypeClass(this.state.routeNameValid)}`}
                     ref={(a) => this._inputElementRouteName = a}
                     placeholder="Nazwa drogi"
                     onChange={(event) => this.handleUserInput(event)}
                     onBlur={(event) => this.blurUserInput(event)}
-                />
-                <Polynomial
-                    entries={this.state.data}
-                    order={5}
-                    plotTitle="<b>Testowy wykres</b>"
-                />
+                /> */}
+
+                <TextInput
+                    name="routeName"
+                    className={`form-control ${this.errorFuelTypeClass(this.state.routeNameValid)}`}
+                    ref={(a) => this._inputElementRouteName = a}
+                    placeholder="Nazwa drogi"
+                    onChange={(event) => this.handleAutosuggestTextInput(event)}
+                    onBlur={(event) => this.handleAutosuggestTextInput(event)}
+                    //onRequestOptions={this.handleRequestOptions} 
+                    options={this.state.options} />
             </div>
         );
     }
