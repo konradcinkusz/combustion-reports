@@ -16,7 +16,8 @@ class RouteReport extends Component {
             friendlyNames: { routeName: 'Pole nazwa drogi' },
             routeNameValid: '',
             options: ["dom", "wakacje", "praca", "inne", "Cactus"], //To trzeba ściągnąć z reduktora
-            value: ''
+            value: '',
+            enteredOptions: []
         }
 
         this.localTimeout = 'undefined';
@@ -71,37 +72,14 @@ class RouteReport extends Component {
 
     addItem(e) {
         var value = this._inputElementRouteName.recentValue;
-        var array = value.split(" ");
-        var options = this.state.options;
-        var foundOptionsIndex = []
-        array.forEach(function (item) {
-            if (item.charAt(0) === '@') {
-                var tocheck = item.substring(1, item.length);
-                options.forEach(function (option, idx) {
-                    if (tocheck.includes(option)) {
-                        foundOptionsIndex.push(idx);
-                    }
-                });
-            }
-        });
 
         var itemToAdd = {
             description: value,
             key: Date.now()
         }
-
         this.props.addRoute(itemToAdd);
+
         this.setState({ value: '' });
-
-        // this._inputElementRouteName.value = "";
-        // this._inputElementPrice.value = "";
-
-        // var value = ''
-        // this.setState({
-        //     'fuelType': value,
-        //     'fuelPrice': value
-        // }, () => { this.validateField('clean', value) });
-
         e.preventDefault();
     }
 
@@ -121,53 +99,33 @@ class RouteReport extends Component {
     }
 
     handleAutosuggestTextInput(textValue) {
+        //W tej metodzie, za każdym wpisaniem tekstu sprawdzamy jego wartość
 
-        if (typeof textValue === "string" && textValue.includes('@')) { //To znaczy że łykamy proxy
-            var value = this._inputElementRouteName.recentValue;
-            var array = value.split(" ");
-            var test = textValue.split(" ").map(function (item) { return item.split("@") }).flat()
+        var enteredOptions = this.state.enteredOptions;
+
+        //https://stackoverflow.com/a/4009768/5493318
+        //var count = (textValue.match(/@/g) || []).length; //tutaj tego nie stosujemy, bo niekoniecznie w tym miejscu textValue jest stringiem
+
+        if (typeof textValue === "string" && (textValue.match(/@/g) || []).length > enteredOptions.length) { //To znaczy że łykamy proxy
+            var textValueSplited = textValue.split(" ").map(function (item) { return item.split("@") }).flat()
             var options = this.state.options;
-            var foundOptionsIndex = []
-            var tstFoundedIdx = []
-
-            //https://stackoverflow.com/a/39893636/5493318
-            // const found = arr1.some(r=> arr2.includes(r))
-            // const found = arr1.some(r=> arr2.indexOf(r) >= 0)
-
-            var found = test.some(function (r) {
+            enteredOptions = []
+            //W tym miejscu uzupełniamy, które indeksy zostały wybrane, i zapisujemy je do state'a
+            textValueSplited.forEach(function (r) {
                 if (options.indexOf(r) >= 0) {
-                    tstFoundedIdx.push(options.indexOf(r))
-                    return true;
-                }
-                return false;
-            });
-            var forEachFoundIdx = []
-            test.forEach(function (r) {
-                if (options.indexOf(r) >= 0) {
-                    forEachFoundIdx.push(options.indexOf(r))
-                }
-            })
-            console.log("ForEach foundIndex: " + forEachFoundIdx)
-            console.log(tstFoundedIdx)
-            array.forEach(function (item) {
-                if (item.includes('@')) {
-                    options.forEach(function (option, idx) {
-                        if (item.includes(option)) {
-                            foundOptionsIndex.push(idx);
-                            console.log("logged index: " + idx)
-                        }
-                    });
+                    enteredOptions.push(options.indexOf(r))
                 }
             });
+            //Tutaj powinna być funkcja try to fill empty fields (typ samochodu itp.)
         } else { //to jest w wypadku wywołania funkcji onBlur
             textValue = this._inputElementRouteName.recentValue;
         }
 
-        this.setState(
-            {
-                'routeName': textValue,
-                value: textValue
-            },
+        this.setState({
+            'routeName': textValue,
+            value: textValue,
+            enteredOptions: enteredOptions
+        },
             () => { this.validateField('routeName', textValue) });
     }
 
