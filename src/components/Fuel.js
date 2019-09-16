@@ -79,7 +79,7 @@ class Fuel extends Component {
                     break;
                 }
                 fieldValidationErrors.fuelType = fuelTypeValid ? '' : 'jest za krótkie (przynajmniej 3 znaki)!';
-                if (this.props.fuelItems.filter(data => (data.fuelType.toLowerCase() === value.toLowerCase())).length > 0) {
+                if (this.props.fuelItems.fuels.filter(data => (data.fuelType.toLowerCase() === value.toLowerCase())).length > 0) {
                     fuelTypeValid = false;
                     fieldValidationErrors.fuelType = 'zawiera paliwo, które już zostało dodane, wprowadź inna nazwę.'
                 }

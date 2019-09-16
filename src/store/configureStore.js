@@ -4,7 +4,6 @@ import { routerReducer, routerMiddleware } from 'react-router-redux';
 import { firebaseReducer } from 'react-redux-firebase'
 import firebase from 'firebase'
 
-import * as WeatherForecasts from './WeatherForecasts';
 import * as Fuel from './Fuel';
 import * as Car from './Car';
 import * as CombustionReport from './CombustionReport'
@@ -27,7 +26,6 @@ export default function configureStore(history, initialState) {
     firebase.initializeApp(firebaseConfig);
 
     const reducers = {
-        weatherForecasts: WeatherForecasts.reducer,
         fuelItems: Fuel.reducer,
         cars: Car.reducer,
         combustionReports: CombustionReport.reducer,
