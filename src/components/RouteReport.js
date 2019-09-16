@@ -18,12 +18,17 @@ class RouteReport extends Component {
 
         this.localTimeout = 'undefined';
         this.start = 100;
+        this.startReverse = 100;
 
         //Working long press:
         //https://codesandbox.io/s/6jm33jz08z
+
         this.onMouseDown = this.onMouseDown.bind(this);
         this.repeat = this.repeat.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
+        this.onMouseUpReverse = this.onMouseUpReverse.bind(this);
+        this.repeatReverse = this.repeatReverse.bind(this);
+        this.onMouseDownReverse = this.onMouseDownReverse.bind(this);
     }
 
     onMouseDown() {
@@ -36,10 +41,28 @@ class RouteReport extends Component {
         this.start = this.start / 2;
     }
 
+    onMouseDownReverse() {
+        this.repeatReverse()
+    }
+
+    repeatReverse() {
+        if (this.props.count > 0) {
+            this.props.decrement();
+            this.tReverse = setTimeout(this.repeatReverse, this.startReverse);
+            this.startReverse = this.startReverse / 2;
+        }
+    }
+
+    onMouseUpReverse() {
+        clearTimeout(this.tReverse);
+        this.startReverse = 100;
+    }
+
     onMouseUp() {
         clearTimeout(this.t);
         this.start = 100;
     }
+
     //#region Funkcje walidacyjne
     setEventState(e, value = '') {
         const name = e.target.name;
@@ -94,7 +117,7 @@ class RouteReport extends Component {
                 fieldValidationErrors.routeName = routeNameValid ? '' : 'jest za krótkie (przynajmniej 3 znaki)!';
                 break;
             case 'clean':
-                routeNameValid = ''
+                routeNameValid = false
                 fieldValidationErrors.routeNameValid = ''
                 break;
             default:
@@ -122,26 +145,39 @@ class RouteReport extends Component {
 
     render() {
         return (
-            <div>
-                <FormErrors formErrors={this.state.formErrors} friendlyNames={this.state.friendlyNames} />
-                <TextInput
-                    name="routeName"
-                    className={`form-control ${this.errorFuelTypeClass(this.state.routeNameValid)}`}
-                    ref={(a) => this._inputElementRouteName = a}
-                    placeholder="Moja droga @Cactusem do domu"
-                    onChange={(event) => this.handleAutosuggestTextInput(event)}
-                    onBlur={(event) => this.handleAutosuggestTextInput(event)}
-                    options={this.state.options}
-                />
-                <div className="d-flex justify-content-between">
-                    <button
-                        className="buttons"
-                        onMouseUp={this.onMouseUp}
-                        onMouseDown={this.onMouseDown}>+</button>
-                    {this.props.count}
-                    <button className="buttons"
-                        onMouseUp={this.onMouseUp}
-                        onMouseDown={this.zoomOutDown}>-</button>
+            <div className="container">
+                <div className="row">
+                    <div className="col-sm">
+                        <FormErrors formErrors={this.state.formErrors} friendlyNames={this.state.friendlyNames} />
+                        <TextInput
+                            name="routeName"
+                            className={`form-control ${this.errorFuelTypeClass(this.state.routeNameValid)}`}
+                            ref={(a) => this._inputElementRouteName = a}
+                            placeholder="Moja droga @Cactusem do domu"
+                            onChange={(event) => this.handleAutosuggestTextInput(event)}
+                            onBlur={(event) => this.handleAutosuggestTextInput(event)}
+                            options={this.state.options}
+                        />
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-sm">
+                        Wprowadź ilość kilometrów:
+                    </div>
+                    <div className="col-sm">
+                        <button
+                            className="buttons"
+                            onMouseUp={this.onMouseUp}
+                            onMouseLeave={this.onMouseUp}
+                            onMouseDown={this.onMouseDown}
+                        >+</button>
+                        {this.props.count} [KM]
+                        <button className="buttons"
+                            onMouseUp={this.onMouseUpReverse} // To się tyczy tylko mouse up'a nad tym określonym buttonem
+                            onMouseLeave={this.onMouseUpReverse}
+                            onMouseDown={this.onMouseDownReverse}
+                        >-</button>
+                    </div>
                 </div>
             </div>
         );

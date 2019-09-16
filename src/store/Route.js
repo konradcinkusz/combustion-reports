@@ -10,7 +10,6 @@ export const actionCreators = {
 export const reducer = (state, action) => {
     state = state || initialState;
 
-    debugger
     if (action.type === incrementCountType) {
         return { ...state, count: state.count + 1 };
     }
