@@ -14,6 +14,24 @@
     border-radius: 10px;
 }
 
+.listMain .circle{
+    width:0;height:0;font-size:20px;color:#fff;text-align:center;line-height:0;padding:25% 0;border-radius:50%;background:#09f}
+
+/* .circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border-style: solid;
+    border-color: #F45B69;
+    font-size: 50px;
+    color: #fff;
+    /* line-height: 500px; */
+    /* text-align: center; */
+    /* align-content: center;
+    background: #000;
+  }  */
+
+
     .listMain .formErrors {
         font-size: 15px;
         border: 2px solid #FFF;

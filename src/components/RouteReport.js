@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { actionCreators } from '../store/Route';
 import Items from "./Items";
 import "./ListMain.css";
+import ReactTooltip from 'react-tooltip'
 
 class RouteReport extends Component {
     constructor(props) {
@@ -15,7 +16,11 @@ class RouteReport extends Component {
             formErrors: { routeName: '' },
             friendlyNames: { routeName: 'Pole nazwa drogi' },
             routeNameValid: '',
-            options: ["dom", "wakacje", "praca", "inne", "Cactus"], //To trzeba ściągnąć z reduktora
+            options: [
+                //this.props.fuelItems.fuels.map(function (item) { return item.fuelType }),
+                this.props.cars.map(function (item) { return item.carType })
+            ].flat(),
+            // ["dom", "wakacje", "praca", "inne", "Cactus"], //To trzeba ściągnąć z reduktora
             value: '',
             enteredOptions: []
         }
@@ -71,12 +76,15 @@ class RouteReport extends Component {
     //#endregion
 
     addItem(e) {
+        //ściągnij raport spalania dla tego samochodu i policz koszt        
         var value = this._inputElementRouteName.recentValue;
 
-        var itemToAdd = {
+        var itemToAdd = { // Tutaj dodajemy tyle rekordów ile samochodów wpisanu
             description: value,
             key: Date.now()
         }
+
+        debugger
         this.props.addRoute(itemToAdd);
 
         this.setState({ value: '' });
@@ -206,17 +214,35 @@ class RouteReport extends Component {
                     <form role="form" onSubmit={this.addItem}>
                         <div className="container">
                             <div className="row">
-                                <div className="col-sm">
+                                <div className="col-10">
                                     <TextInput
                                         name="routeName"
                                         className={`form-control ${this.errorFuelTypeClass(this.state.routeNameValid)}`}
                                         ref={(a) => this._inputElementRouteName = a}
-                                        placeholder="Moja droga @Cactusem do domu"
+                                        placeholder="Nazwa drogi + @<Samochód>"
                                         onChange={(event) => this.handleAutosuggestTextInput(event)}
                                         onBlur={(event) => this.handleAutosuggestTextInput(event)}
                                         options={this.state.options}
                                         value={`${this.state.value}`}
                                     />
+                                </div>
+                                <div className="col-2">
+                                    <ReactTooltip
+                                        id='exampleText'
+                                        place='bottom'
+                                        type='info' effect='solid'
+                                        globalEventOff='click'
+                                    >
+                                        <span>Show happy face</span>
+                                    </ReactTooltip>
+                                    <span className="circle">
+                                        <i
+                                            className="fas fa-info"
+                                            data-tip="hello world"
+                                            data-for="exampleText"
+                                            data-event='click focus'
+                                        ></i>
+                                    </span>
                                 </div>
                             </div>
                             <div className="row">
@@ -255,11 +281,10 @@ class RouteReport extends Component {
                         })}
                         delete={this.props.removeRoute} />
                 </div>
-            </div>
+            </div >
         );
     }
 }
-
 
 export default connect(
     state => ({
