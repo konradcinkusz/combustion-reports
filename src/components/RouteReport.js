@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { actionCreators } from '../store/Route';
 import Items from "./Items";
 import "./ListMain.css";
-import ReactTooltip from 'react-tooltip'
+import { RouteTooltip } from './RouteTooltip';
 
 class RouteReport extends Component {
     constructor(props) {
@@ -84,7 +84,6 @@ class RouteReport extends Component {
             key: Date.now()
         }
 
-        debugger
         this.props.addRoute(itemToAdd);
 
         this.setState({ value: '' });
@@ -204,6 +203,9 @@ class RouteReport extends Component {
             };
         });
 
+        var routeNameTooltip = "Wprowadź swoją nazwę drogi, następnie po '@' uzupełniaj samochód z podpowiedzi."
+        var routeKilometerTooltip = "Wprowadź liczbę kilometrów, które potrzebujesz do przebycia drogi."
+
         return (
             <div className="listMain">
                 <h2>Wprowadź swoją drogę.</h2>
@@ -214,6 +216,9 @@ class RouteReport extends Component {
                     <form role="form" onSubmit={this.addItem}>
                         <div className="container">
                             <div className="row">
+                                <div className="col-1">
+                                    <i className="fas fa-car-side" />
+                                </div>
                                 <div className="col-10">
                                     <TextInput
                                         name="routeName"
@@ -226,30 +231,16 @@ class RouteReport extends Component {
                                         value={`${this.state.value}`}
                                     />
                                 </div>
-                                <div className="col-2">
-                                    <ReactTooltip
-                                        id='exampleText'
-                                        place='bottom'
-                                        type='info' effect='solid'
-                                        globalEventOff='click'
-                                    >
-                                        <span>Show happy face</span>
-                                    </ReactTooltip>
-                                    <span className="circle">
-                                        <i
-                                            className="fas fa-info"
-                                            data-tip="hello world"
-                                            data-for="exampleText"
-                                            data-event='click focus'
-                                        ></i>
-                                    </span>
-                                </div>
+                                <RouteTooltip id="RouteNameToolTip" text={routeNameTooltip} />
                             </div>
                             <div className="row">
-                                <div className="col-sm">
+                                <div className="col-1">
+                                    <i className="fas fa-tachometer-alt" />
+                                </div>
+                                <div className="col-5">
                                     Wprowadź ilość kilometrów:
                                 </div>
-                                <div className="col-sm">
+                                <div className="col-5">
                                     <button
                                         type="button"
                                         className="buttons"
@@ -260,12 +251,12 @@ class RouteReport extends Component {
                                     {this.props.kmCounter.count} [KM]
                                     <button
                                         type="button"
-                                        className="buttons"
                                         onMouseUp={this.onMouseUpReverse}
                                         onMouseLeave={this.onMouseUpReverse}
                                         onMouseDown={this.onMouseDownReverse}
                                     >-</button>
                                 </div>
+                                <RouteTooltip id="RouteKilometersToolTip" text={routeKilometerTooltip} />
                             </div>
                         </div>
                         <button type="submit" disabled={!this.state.formValid}>Dodaj</button>
