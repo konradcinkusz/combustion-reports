@@ -351,7 +351,7 @@ class CombustionReport extends Component {
                             entries={this.state.selectedCombustions.map(function (item) {
                                 return { x: item.averageSpeed, y: item.averageCombusiton }
                             })}
-                            order={5}
+                            order={3}
                             plotTitle="<b>Średnia prędkość do spalania</b>"
                             id={123}
                             carKey={selectedCarKey}
@@ -361,7 +361,7 @@ class CombustionReport extends Component {
                             entries={this.state.selectedCombustions.map(function (item) {
                                 return { x: item.routeKilometers, y: item.averageCombusiton }
                             })}
-                            order={5}
+                            order={3}
                             plotTitle="<b>Średnia dł. trasy do spalania</b>"
                             id={456}
                             carKey={selectedCarKey}

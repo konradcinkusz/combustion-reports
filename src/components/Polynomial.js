@@ -132,6 +132,7 @@ class Polynomial extends Component {
 
         var result = { string: "undefined" };
         var data = { x: [0], y: [0] };
+
         if (polyCoords.length !== 0) {
             result = regression.power(polyCoords, {
                 order: this.props.order

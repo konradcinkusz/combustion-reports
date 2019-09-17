@@ -22,7 +22,8 @@ class RouteReport extends Component {
             ].flat(),
             // ["dom", "wakacje", "praca", "inne", "Cactus"], //To trzeba ściągnąć z reduktora
             value: '',
-            enteredOptions: []
+            enteredOptions: [],
+            friendlyText: ''
         }
 
         this.localTimeout = 'undefined';
@@ -90,9 +91,13 @@ class RouteReport extends Component {
                 var foundFuel = fuels.find(function (element) {
                     return element.key === car.carFuelKey
                 });
+
                 var averageCombustion = car.combustionRoutePoly.predict(kmCount.count);
                 var averageVelocity = car.combustionVelocityPoly.predict(kmCount.count)
-                var routeCost = parseFloat(averageCombustion[1]) * parseFloat(foundFuel.fuelPrice);
+                //koszt 100km
+                var routeCost100 = parseFloat(averageCombustion[1]) * parseFloat(foundFuel.fuelPrice);
+                //koszt konkretnie tej trasy:
+                var routeCost = (kmCount.count * routeCost100) / 100;
                 return {
                     ...car,
                     averageCombustion: averageCombustion,
@@ -105,8 +110,10 @@ class RouteReport extends Component {
         for (var i = 0; i < enteredCars.length; i++) {
             if (typeof enteredCars[i] !== 'undefined') {
                 var routeCost = enteredCars[i].routeCost;
+                var carName = enteredCars[i].carType
+
                 var itemToAdd = { // Tutaj dodajemy tyle rekordów ile samochodów wpisanu
-                    description: value + " " + routeCost,
+                    description: this.state.friendlyText + " " + carName + ": " + routeCost + "zł",
                     key: i + Date.now() //Żeby nie było błędu, jak za szybko będzie chciał dodać komponenty
                 }
                 this.props.addRoute(itemToAdd);
@@ -139,15 +146,28 @@ class RouteReport extends Component {
 
         //https://stackoverflow.com/a/4009768/5493318
         //var count = (textValue.match(/@/g) || []).length; //tutaj tego nie stosujemy, bo niekoniecznie w tym miejscu textValue jest stringiem
-
-        if (typeof textValue === "string" && (textValue.match(/@/g) || []).length > enteredOptions.length) { //To znaczy że łykamy proxy
+        var isText = typeof textValue === 'string'
+        var thenum = 0;
+        if (isText && textValue) {
+            thenum = textValue.match(/\d+\s?km/g);
+            if (thenum !== null) {
+                this.props.kmCounter.count = parseInt(thenum[0]);
+            } else {
+                this.props.kmCounter.count = 0;
+            }
+        }
+        var friendlyTextValue = this.state.friendlyText;
+        if (isText && (textValue.match(/@/g) || []).length >= enteredOptions.length) { //To znaczy że łykamy proxy
             var textValueSplited = textValue.split(" ").map(function (item) { return item.split("@") }).flat()
             var options = this.state.options;
             enteredOptions = []
             //W tym miejscu uzupełniamy, które indeksy zostały wybrane, i zapisujemy je do state'a
             textValueSplited.forEach(function (r) {
                 if (options.indexOf(r) >= 0) {
-                    enteredOptions.push(options.indexOf(r))
+                    var opt = options.indexOf(r)
+                    enteredOptions.push(opt)
+
+                    friendlyTextValue = textValue.replace("@" + r, "")
                 }
             });
             //Tutaj powinna być funkcja try to fill empty fields (typ samochodu itp.)
@@ -155,10 +175,13 @@ class RouteReport extends Component {
             textValue = this._inputElementRouteName.recentValue;
         }
 
+        friendlyTextValue = friendlyTextValue.replace(/[0-9]|km/g, "");
+
         this.setState({
             'routeName': textValue,
             value: textValue,
-            enteredOptions: enteredOptions
+            enteredOptions: enteredOptions,
+            friendlyText: friendlyTextValue
         },
             () => { this.validateField('routeName', textValue) });
     }
