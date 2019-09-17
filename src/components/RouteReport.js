@@ -161,13 +161,14 @@ class RouteReport extends Component {
             var textValueSplited = textValue.split(" ").map(function (item) { return item.split("@") }).flat()
             var options = this.state.options;
             enteredOptions = []
+            friendlyTextValue = textValue
             //W tym miejscu uzupełniamy, które indeksy zostały wybrane, i zapisujemy je do state'a
             textValueSplited.forEach(function (r) {
                 if (options.indexOf(r) >= 0) {
                     var opt = options.indexOf(r)
                     enteredOptions.push(opt)
 
-                    friendlyTextValue = textValue.replace("@" + r, "")
+                    friendlyTextValue = friendlyTextValue.replace("@" + r, "")
                 }
             });
             //Tutaj powinna być funkcja try to fill empty fields (typ samochodu itp.)

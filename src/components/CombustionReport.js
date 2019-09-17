@@ -80,7 +80,8 @@ class CombustionReport extends Component {
                 friendlyName: x,
                 key: itemToAdd.key,
                 averageCombusiton: itemToAdd.averageCombusiton,
-                averageSpeed: itemToAdd.averageSpeed
+                averageSpeed: itemToAdd.averageSpeed,
+                routeKilometers: itemToAdd.routeKilometers
             }]
         }, () => { this.validateField('clean', value) });
 
