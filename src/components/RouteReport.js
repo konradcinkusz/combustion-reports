@@ -79,6 +79,20 @@ class RouteReport extends Component {
         //ściągnij raport spalania dla tego samochodu i policz koszt        
         var value = this._inputElementRouteName.recentValue;
 
+        var options = this.state.enteredOptions;
+        var enteredCars = this.props.cars.filter(function (car, idx) {
+            debugger
+            if (options.includes(idx)
+                && car.combustionRoutePoly !== 'undefined'
+                && car.combustionVelocityPoly !== 'undefined') {
+                return {
+                    ...car,
+                    fuelCost: car.combustionRoutePoly(this.props.kmCounter),
+                    averageVelocity: car.combustionVelocityPoly(this.props.kmCounter)
+                };
+            }
+        })
+
         var itemToAdd = { // Tutaj dodajemy tyle rekordów ile samochodów wpisanu
             description: value,
             key: Date.now()
