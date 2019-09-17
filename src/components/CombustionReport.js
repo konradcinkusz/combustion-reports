@@ -354,6 +354,8 @@ class CombustionReport extends Component {
                             order={5}
                             plotTitle="<b>Średnia prędkość do spalania</b>"
                             id={123}
+                            carKey={selectedCarKey}
+                            plotType="combustionSpeed"
                         />
                         <Polynomial
                             entries={this.state.selectedCombustions.map(function (item) {
@@ -362,6 +364,8 @@ class CombustionReport extends Component {
                             order={5}
                             plotTitle="<b>Średnia dł. trasy do spalania</b>"
                             id={456}
+                            carKey={selectedCarKey}
+                            plotType="combustionRoute"
                         />
                     </div>
                 </div>

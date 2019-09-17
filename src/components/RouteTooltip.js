@@ -14,7 +14,7 @@ export const RouteTooltip = ({ text, id }) =>
             </span>
         </ReactTooltip>
         <div className="circle"
-            data-tip="Route kilometers"
+            data-tip={text}
             data-for={id}>
             <i className="fas fa-info" />
         </div>

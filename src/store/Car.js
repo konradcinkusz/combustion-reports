@@ -77,8 +77,8 @@ export const reducer = (state, action) => {
           ...item,
           ...{
             ...item,
-            combustionVelocityPoly: action.combustionVelocityPoly,
-            combustionRoutePoly: action.combustionRoutePoly
+            combustionVelocityPoly: action.car.combustionVelocityPoly,
+            combustionRoutePoly: action.car.combustionRoutePoly
           }
         }
       });

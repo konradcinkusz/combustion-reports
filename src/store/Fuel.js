@@ -30,6 +30,7 @@ export const actionCreators = {
         fuel: fuel
     }),
     requestFuelType: () => async (dispatch) => {
+
         //if (startDateIndex === getState().fuelItemsServer.startDateIndex) {
         //    // Don't issue a duplicate request (we already have or are loading the requested data)
         //    return;

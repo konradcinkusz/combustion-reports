@@ -4,6 +4,9 @@ import Plot from "react-plotly.js";
 import * as tf from "@tensorflow/tfjs";
 import Collapsible from "react-collapsible";
 import { isEqual } from "lodash";
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { actionCreators } from '../store/Car';
 
 class Polynomial extends Component {
     constructor(props) {
@@ -23,6 +26,16 @@ class Polynomial extends Component {
     shouldComponentUpdate(nextProps) {
         if (!isEqual(this.props, nextProps)) {
             this.componentWillMount();
+            var carKey = this.props.carKey;
+            var enteredCar = this.props.cars.filter(function (car) { if (carKey === car.key) { return car } });
+
+            if (this.props.plotType === "combustionRoute") {
+                enteredCar[0].combustionRoutePoly = this.state.result
+            } else if (this.props.plotType === "combustionSpeed") {
+                enteredCar[0].combustionVelocityPoly = this.state.result
+            }
+
+            this.props.updateCarPoly(enteredCar)
             return true;
         }
         return false;
@@ -42,6 +55,7 @@ class Polynomial extends Component {
         x = x.sort(function (a, b) {
             return a - b;
         });
+
         for (let i = 0; i < numPoints; i++) {
             y[i] = predict(x[i])[1];
         }
@@ -175,4 +189,9 @@ class Polynomial extends Component {
     }
 }
 
-export default Polynomial;
+export default connect(
+    state => ({
+        cars: state.cars
+    }),
+    dispatch => bindActionCreators(actionCreators, dispatch)
+)(Polynomial);

@@ -80,25 +80,38 @@ class RouteReport extends Component {
         var value = this._inputElementRouteName.recentValue;
 
         var options = this.state.enteredOptions;
-        var enteredCars = this.props.cars.filter(function (car, idx) {
-            debugger
+        var kmCount = this.props.kmCounter;
+        var fuels = this.props.fuelItems.fuels;
+
+        var enteredCars = this.props.cars.map(function (car, idx) {
             if (options.includes(idx)
                 && car.combustionRoutePoly !== 'undefined'
                 && car.combustionVelocityPoly !== 'undefined') {
+                var foundFuel = fuels.find(function (element) {
+                    return element.key === car.carFuelKey
+                });
+                var averageCombustion = car.combustionRoutePoly.predict(kmCount.count);
+                var averageVelocity = car.combustionVelocityPoly.predict(kmCount.count)
+                var routeCost = parseFloat(averageCombustion[1]) * parseFloat(foundFuel.fuelPrice);
                 return {
                     ...car,
-                    fuelCost: car.combustionRoutePoly(this.props.kmCounter),
-                    averageVelocity: car.combustionVelocityPoly(this.props.kmCounter)
+                    averageCombustion: averageCombustion,
+                    averageVelocity: averageVelocity,
+                    routeCost: routeCost.toFixed(2)
                 };
             }
         })
 
-        var itemToAdd = { // Tutaj dodajemy tyle rekordów ile samochodów wpisanu
-            description: value,
-            key: Date.now()
+        for (var i = 0; i < enteredCars.length; i++) {
+            if (typeof enteredCars[i] !== 'undefined') {
+                var routeCost = enteredCars[i].routeCost;
+                var itemToAdd = { // Tutaj dodajemy tyle rekordów ile samochodów wpisanu
+                    description: value + " " + routeCost,
+                    key: i + Date.now() //Żeby nie było błędu, jak za szybko będzie chciał dodać komponenty
+                }
+                this.props.addRoute(itemToAdd);
+            }
         }
-
-        this.props.addRoute(itemToAdd);
 
         this.setState({ value: '' });
         e.preventDefault();
@@ -245,7 +258,7 @@ class RouteReport extends Component {
                                         value={`${this.state.value}`}
                                     />
                                 </div>
-                                <RouteTooltip id="RouteNameToolTip" text={routeNameTooltip} />
+                                <RouteTooltip id="routeName" text={routeNameTooltip} />
                             </div>
                             <div className="row">
                                 <div className="col-1">
@@ -270,7 +283,7 @@ class RouteReport extends Component {
                                         onMouseDown={this.onMouseDownReverse}
                                     >-</button>
                                 </div>
-                                <RouteTooltip id="RouteKilometersToolTip" text={routeKilometerTooltip} />
+                                <RouteTooltip id="routeKilometers" text={routeKilometerTooltip} />
                             </div>
                         </div>
                         <button type="submit" disabled={!this.state.formValid}>Dodaj</button>
@@ -286,7 +299,7 @@ class RouteReport extends Component {
                         })}
                         delete={this.props.removeRoute} />
                 </div>
-            </div >
+            </div>
         );
     }
 }
