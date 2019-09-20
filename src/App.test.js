@@ -5,10 +5,10 @@ import { MemoryRouter } from 'react-router-dom';
 import App from './App';
 
 it('renders without crashing', () => {
-  const storeFake = (state) => ({
-    default: () => { },
-    subscribe: () => { },
-    dispatch: () => { },
+  const storeFake = state => ({
+    default: () => {},
+    subscribe: () => {},
+    dispatch: () => {},
     getState: () => ({ ...state })
   });
   const store = storeFake({});
@@ -19,5 +19,7 @@ it('renders without crashing', () => {
       <MemoryRouter>
         <App />
       </MemoryRouter>
-    </Provider>, div);
+    </Provider>,
+    div
+  );
 });

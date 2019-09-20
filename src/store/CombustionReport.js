@@ -1,5 +1,5 @@
-﻿﻿const addReportType = "REPORT_ADD";
-const removeReportType = "REPORT_REMOVE";
+﻿const addReportType = 'REPORT_ADD';
+const removeReportType = 'REPORT_REMOVE';
 
 export const actionCreators = {
   addReport: report => ({
@@ -68,7 +68,7 @@ export const reducer = (state, action) => {
         }
       ];
     case removeReportType:
-      return state.filter(function (item) {
+      return state.filter(function(item) {
         return item.key !== action.report.key;
       });
     default:

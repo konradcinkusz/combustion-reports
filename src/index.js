@@ -21,7 +21,7 @@ const store = configureStore(history, initialState);
 
 store.subscribe(logger);
 function logger() {
-    console.log(store.getState());
+  console.log(store.getState());
 }
 
 const rootElement = document.getElementById('root');
@@ -32,6 +32,7 @@ ReactDOM.render(
       <App />
     </ConnectedRouter>
   </Provider>,
-  rootElement);
+  rootElement
+);
 
 registerServiceWorker();
