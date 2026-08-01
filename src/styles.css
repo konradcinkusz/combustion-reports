@@ -1,0 +1,21 @@
+/* Bootstrap covers the layout; this file only holds what it does not. */
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  min-height: 100vh;
+}
+
+/* Plotly injects an inline-styled SVG that ignores the container's max-width on
+   narrow viewports, so the page body scrolls sideways without this. */
+.js-plotly-plot,
+.js-plotly-plot .plot-container {
+  max-width: 100%;
+}
+
+/* `details` markers vary between engines; keep the disclosure row compact. */
+details > summary {
+  cursor: pointer;
+}

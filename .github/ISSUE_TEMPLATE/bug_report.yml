@@ -1,0 +1,55 @@
+name: Bug report
+description: Something behaves differently from what it should
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Your data lives in your browser's localStorage —
+        please don't paste anything from it you'd rather not publish.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did you expect, and what did you get instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to Cars, add a car named "…"
+        2. Go to Reports, enter …
+        3. The chart shows …
+    validations:
+      required: true
+
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where did you run it?
+      options:
+        - The hosted site
+        - Local dev server (npm run dev)
+        - Local production build (npm run build + preview)
+        - Docker
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: Firefox 141, Chrome 139, Safari 18…
+    validations:
+      required: true
+
+  - type: textarea
+    id: console
+    attributes:
+      label: Console output
+      description: Anything in the browser devtools console. Rendered as code, no backticks needed.
+      render: text

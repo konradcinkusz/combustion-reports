@@ -1,0 +1,9 @@
+# Normalise line endings so a clone on Windows does not rewrite every file.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary
+
+# Generated — collapse in diffs and exclude from language statistics.
+package-lock.json linguist-generated=true -diff
