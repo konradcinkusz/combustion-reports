@@ -1,0 +1,30 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      # These move together; separate PRs for each just means resolving the same
+      # peer-dependency matrix three times.
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "react-redux"
+          - "react-router-dom"
+          - "@reduxjs/toolkit"
+      tooling:
+        patterns:
+          - "vite"
+          - "vitest"
+          - "@vitejs/*"
+          - "eslint*"
+          - "@eslint/*"
+          - "@testing-library/*"
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly

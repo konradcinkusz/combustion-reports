@@ -1,0 +1,30 @@
+name: Feature request
+description: Suggest something the app should do
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the situation you're in, not the solution you have in mind.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like it to do?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope
+      description: |
+        The app is deliberately a local-only static site — no account, no server,
+        no telemetry. Features that need a backend are a much larger change and
+        will be discussed before any code is written.
+      options:
+        - label: This works without a server or an account
+        - label: I've checked the open issues for a duplicate
